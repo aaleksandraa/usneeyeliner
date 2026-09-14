@@ -46,10 +46,10 @@ Aplikacija će standardno biti dostupna na `http://127.0.0.1:8000`.
 
 ## Početni administrator
 
-- Email: `admin@example.com`
-- Lozinka: `ChangeMe123!`
+- Email se postavlja kroz `ADMIN_EMAIL` u lokalnom `.env` fajlu.
+- Lozinka se postavlja kroz `ADMIN_PASSWORD` u lokalnom `.env` fajlu.
 
-Ovaj nalog kreira `AdminSeeder`. Lozinku obavezno promijenite prije produkcijskog korištenja.
+`AdminSeeder` kreira ili ažurira glavni administratorski nalog. Lozinku nemojte upisivati u repozitorij niti u `.env.example`.
 
 ## Email i reset lozinke
 
