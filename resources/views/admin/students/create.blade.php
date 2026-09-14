@@ -1,0 +1,1 @@
+<x-layouts.app title="Novi učenik" heading="Dodaj učenika" subtitle="Kreirajte privatni nalog i početnu lozinku."><form class="card max-w-2xl p-6 sm:p-8" method="POST" action="{{ route('admin.students.store') }}">@include('admin.students._form')</form></x-layouts.app>

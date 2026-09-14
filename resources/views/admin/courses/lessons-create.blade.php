@@ -1,0 +1,1 @@
+<x-layouts.app title="Nova lekcija" heading="Dodaj lekciju" :subtitle="$course->title"><form class="card max-w-3xl p-6 sm:p-8" method="POST" action="{{ route('admin.courses.lessons.store', $course) }}">@include('admin.courses._lesson-form')</form></x-layouts.app>

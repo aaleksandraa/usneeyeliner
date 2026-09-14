@@ -1,0 +1,1 @@
+<x-layouts.app title="Uredi učenika" heading="Uredi učenika"><form class="card max-w-2xl p-6 sm:p-8" method="POST" action="{{ route('admin.students.update', $student) }}">@include('admin.students._form')</form></x-layouts.app>

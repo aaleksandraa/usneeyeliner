@@ -1,0 +1,1 @@
+<x-layouts.app title="Uredi kurs" :heading="$course->title"><form class="card max-w-3xl p-6 sm:p-8" method="POST" enctype="multipart/form-data" action="{{ route('admin.courses.update', $course) }}">@include('admin.courses._form')</form></x-layouts.app>

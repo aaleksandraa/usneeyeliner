@@ -1,0 +1,1 @@
+<x-layouts.app title="Novi kurs" heading="Dodaj kurs" subtitle="Slug se automatski generiše iz naziva."><form class="card max-w-3xl p-6 sm:p-8" method="POST" enctype="multipart/form-data" action="{{ route('admin.courses.store') }}">@include('admin.courses._form')</form></x-layouts.app>
