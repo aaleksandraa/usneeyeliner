@@ -99,3 +99,5 @@ php artisan optimize
 npm ci
 npm run build
 ```
+
+Migracije uvijek pokrenite odmah nakon povlačenja novog koda. Aplikacija zadržava dashboard fallback tokom kratkog deployment perioda, ali nove funkcije koje koriste nove kolone zahtijevaju završene migracije.

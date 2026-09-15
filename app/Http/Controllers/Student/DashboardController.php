@@ -12,7 +12,7 @@ class DashboardController extends Controller
     {
         $courses = $request->user()->courses()
             ->where('status', 'active')
-            ->with('lessons:id,course_id,vimeo_thumbnail_url,sort_order')
+            ->with('lessons')
             ->withCount('lessons')
             ->orderBy('title')
             ->get();

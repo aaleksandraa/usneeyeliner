@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class SecurityAndCourseAccessTest extends TestCase
@@ -163,5 +164,27 @@ class SecurityAndCourseAccessTest extends TestCase
         ])->assertRedirect();
 
         $this->assertNull(CourseLesson::where('title', 'Siguran thumbnail')->sole()->vimeo_thumbnail_url);
+    }
+
+    public function test_dashboard_remains_available_during_deployment_before_thumbnail_migration_runs(): void
+    {
+        $student = User::factory()->create();
+        $course = Course::factory()->create(['title' => 'Kurs tokom migracije']);
+        CourseLesson::factory()->create(['course_id' => $course->id, 'sort_order' => 1]);
+        $student->courses()->attach($course);
+
+        Schema::table('course_lessons', function ($table) {
+            $table->dropColumn('vimeo_thumbnail_url');
+        });
+
+        try {
+            $this->actingAs($student)->get(route('dashboard'))
+                ->assertOk()
+                ->assertSee('Kurs tokom migracije');
+        } finally {
+            Schema::table('course_lessons', function ($table) {
+                $table->string('vimeo_thumbnail_url', 2048)->nullable();
+            });
+        }
     }
 }
