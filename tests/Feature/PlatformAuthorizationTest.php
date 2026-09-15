@@ -12,9 +12,11 @@ class PlatformAuthorizationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_student_cannot_open_admin_routes(): void
+    public function test_student_is_redirected_from_admin_pages_to_own_dashboard(): void
     {
-        $this->actingAs(User::factory()->create())->get('/admin')->assertForbidden();
+        $this->actingAs(User::factory()->create())
+            ->get('/admin')
+            ->assertRedirect(route('dashboard'));
     }
 
     public function test_admin_can_open_admin_routes(): void

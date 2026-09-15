@@ -11,9 +11,16 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Student\CourseController as StudentCourseController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ProfileController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/login');
+Route::get('/', function (Request $request) {
+    if (! $request->user()) {
+        return redirect()->route('login');
+    }
+
+    return redirect()->route($request->user()->isAdmin() ? 'admin.dashboard' : 'dashboard');
+})->name('home');
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->name('login.store');
@@ -24,7 +31,7 @@ Route::middleware('guest')->group(function () {
 });
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/', AdminDashboardController::class)->name('dashboard');
     Route::patch('/students/{student}/status', [StudentController::class, 'toggleStatus'])->name('students.status');
     Route::put('/students/{student}/password', [StudentController::class, 'resetPassword'])->name('students.password');
@@ -40,7 +47,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::delete('/courses/{course}/lessons/{lesson}', [CourseLessonController::class, 'destroy'])->name('courses.lessons.destroy');
 });
 
-Route::middleware(['auth', 'student'])->group(function () {
+Route::middleware(['auth', 'role:student'])->group(function () {
     Route::get('/dashboard', StudentDashboardController::class)->name('dashboard');
     Route::get('/courses/{course}', [StudentCourseController::class, 'show'])->name('courses.show');
     Route::get('/courses/{course}/lessons/{lesson}', [StudentCourseController::class, 'lesson'])->name('courses.lessons.show');

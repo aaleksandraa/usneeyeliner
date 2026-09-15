@@ -127,13 +127,22 @@ class SecurityAndCourseAccessTest extends TestCase
         $this->actingAs($student)->get(route('courses.lessons.show', [$course, $foreignLesson]))->assertNotFound();
     }
 
-    public function test_inactive_authenticated_users_are_blocked(): void
+    public function test_inactive_authenticated_users_are_logged_out_and_sent_to_login(): void
     {
         $inactiveStudent = User::factory()->inactive()->create();
         $inactiveAdmin = User::factory()->admin()->inactive()->create();
 
-        $this->actingAs($inactiveStudent)->get(route('dashboard'))->assertForbidden();
-        $this->actingAs($inactiveAdmin)->get(route('admin.dashboard'))->assertForbidden();
+        $this->actingAs($inactiveStudent)
+            ->get(route('dashboard'))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('email');
+        $this->assertGuest();
+
+        $this->actingAs($inactiveAdmin)
+            ->get(route('admin.dashboard'))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('email');
+        $this->assertGuest();
     }
 
     public function test_security_headers_are_present(): void
