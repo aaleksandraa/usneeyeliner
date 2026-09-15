@@ -15,9 +15,11 @@ Privatna platforma za online kurseve izrađena kao Laravel 12 monolit. Backend, 
 
 - administratorski i učenički nalozi bez javne registracije
 - upravljanje učenicima, statusima i lozinkama
-- upravljanje kursevima, lekcijama i dodjelama pristupa
+- kreiranje kursa samo unosom naziva, uz opcionalni opis pri uređivanju
+- upravljanje video lekcijama i dodjelama pristupa
 - Vimeo URL, iframe i unlisted privacy hash podrška
-- automatsko preuzimanje naslovne slike iz Vimeo videa
+- automatsko preuzimanje thumbnaila svake lekcije i naslovne slike kursa iz prvog videa
+- prvi video se odmah prikazuje pri otvaranju kursa, uz poredane thumbnail kartice ispod
 - prikaz samo dodijeljenih i aktivnih kurseva učeniku
 - evidencija prijava, novih IP adresa i uređaja
 - zaboravljena lozinka i siguran jednokratni reset link

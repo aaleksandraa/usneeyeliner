@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreCourseRequest;
 use App\Http\Requests\Admin\UpdateCourseRequest;
 use App\Models\Course;
-use App\Services\VimeoThumbnailService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,8 +13,6 @@ use Illuminate\View\View;
 
 class CourseController extends Controller
 {
-    public function __construct(private readonly VimeoThumbnailService $thumbnailService) {}
-
     public function index(): View
     {
         $courses = Course::withCount(['lessons', 'students'])->latest()->paginate(20);
@@ -30,13 +27,9 @@ class CourseController extends Controller
 
     public function store(StoreCourseRequest $request): RedirectResponse
     {
-        $data = $request->safe()->except('image');
+        $data = $request->validated();
         $data['slug'] = $this->uniqueSlug($data['title']);
         $data['status'] = $data['status'] ?? 'active';
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('courses', 'public');
-        }
-        $data['vimeo_thumbnail_url'] = $this->thumbnailService->fetch($data['vimeo_url'] ?? null);
         $course = Course::create($data);
 
         return redirect()->route('admin.courses.show', $course)->with('success', 'Kurs je kreiran.');
@@ -56,17 +49,10 @@ class CourseController extends Controller
 
     public function update(UpdateCourseRequest $request, Course $course): RedirectResponse
     {
-        $data = $request->safe()->except('image');
+        $data = $request->validated();
         if ($data['title'] !== $course->title) {
             $data['slug'] = $this->uniqueSlug($data['title'], $course);
         }
-        if ($request->hasFile('image')) {
-            if ($course->image) {
-                Storage::disk('public')->delete($course->image);
-            }
-            $data['image'] = $request->file('image')->store('courses', 'public');
-        }
-        $data['vimeo_thumbnail_url'] = $this->thumbnailService->fetch($data['vimeo_url'] ?? null);
         $course->update($data);
 
         return redirect()->route('admin.courses.show', $course)->with('success', 'Kurs je sačuvan.');

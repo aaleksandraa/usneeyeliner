@@ -10,7 +10,12 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request): View
     {
-        $courses = $request->user()->courses()->where('status', 'active')->withCount('lessons')->orderBy('title')->get();
+        $courses = $request->user()->courses()
+            ->where('status', 'active')
+            ->with('lessons:id,course_id,vimeo_thumbnail_url,sort_order')
+            ->withCount('lessons')
+            ->orderBy('title')
+            ->get();
 
         return view('student.dashboard', compact('courses'));
     }

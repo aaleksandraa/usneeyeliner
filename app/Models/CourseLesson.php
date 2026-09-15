@@ -11,7 +11,7 @@ class CourseLesson extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['course_id', 'title', 'description', 'vimeo_url', 'sort_order'];
+    protected $fillable = ['course_id', 'title', 'description', 'vimeo_url', 'vimeo_thumbnail_url', 'sort_order'];
 
     protected function casts(): array
     {

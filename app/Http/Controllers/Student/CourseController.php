@@ -16,7 +16,10 @@ class CourseController extends Controller
         abort_unless($course->status === 'active', 404);
         $course->load('lessons');
 
-        return view('student.courses.show', compact('course'));
+        return view('student.courses.show', [
+            'course' => $course,
+            'featuredLesson' => $course->lessons->first(),
+        ]);
     }
 
     public function lesson(Request $request, Course $course, CourseLesson $lesson): View
@@ -25,7 +28,10 @@ class CourseController extends Controller
         abort_unless($course->status === 'active' && $lesson->course_id === $course->id, 404);
         $course->load('lessons');
 
-        return view('student.courses.lesson', compact('course', 'lesson'));
+        return view('student.courses.show', [
+            'course' => $course,
+            'featuredLesson' => $lesson,
+        ]);
     }
 
     private function authorizeAccess(Request $request, Course $course): void

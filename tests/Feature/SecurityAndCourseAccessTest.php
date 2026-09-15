@@ -40,13 +40,11 @@ class SecurityAndCourseAccessTest extends TestCase
 
         $this->actingAs($admin)->post(route('admin.courses.store'), [
             'title' => 'Digitalni marketing',
-            'description' => 'Kompletan praktični kurs.',
-            'vimeo_url' => 'https://vimeo.com/123456789',
-            'status' => 'active',
         ])->assertRedirect();
 
         $course = Course::where('title', 'Digitalni marketing')->sole();
-        $this->assertSame('https://i.vimeocdn.com/video/course-cover_1280x720.jpg', $course->vimeo_thumbnail_url);
+        $this->assertNull($course->description);
+        $this->assertSame('active', $course->status);
 
         $this->actingAs($admin)->post(route('admin.courses.lessons.store', $course), [
             'title' => 'Uvod u kurs',
@@ -55,7 +53,10 @@ class SecurityAndCourseAccessTest extends TestCase
             'sort_order' => 1,
         ])->assertRedirect(route('admin.courses.show', $course));
 
-        $this->assertDatabaseHas('course_lessons', ['course_id' => $course->id, 'title' => 'Uvod u kurs']);
+        $lesson = CourseLesson::where('course_id', $course->id)->sole();
+        $this->assertSame('Uvod u kurs', $lesson->title);
+        $this->assertSame('https://i.vimeocdn.com/video/course-cover_1280x720.jpg', $lesson->vimeo_thumbnail_url);
+        $this->assertSame($lesson->vimeo_thumbnail_url, $course->fresh()->thumbnail_url);
     }
 
     public function test_student_dashboard_lists_all_and_only_assigned_active_courses(): void
@@ -154,13 +155,13 @@ class SecurityAndCourseAccessTest extends TestCase
         ]);
         $admin = User::factory()->admin()->create();
 
-        $this->actingAs($admin)->post(route('admin.courses.store'), [
+        $course = Course::factory()->create();
+        $this->actingAs($admin)->post(route('admin.courses.lessons.store', $course), [
             'title' => 'Siguran thumbnail',
-            'description' => 'Kurs bez nepouzdane slike.',
             'vimeo_url' => 'https://vimeo.com/123456789',
-            'status' => 'active',
+            'sort_order' => 1,
         ])->assertRedirect();
 
-        $this->assertNull(Course::where('title', 'Siguran thumbnail')->sole()->vimeo_thumbnail_url);
+        $this->assertNull(CourseLesson::where('title', 'Siguran thumbnail')->sole()->vimeo_thumbnail_url);
     }
 }

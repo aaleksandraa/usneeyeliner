@@ -20,7 +20,7 @@
                     <div class="p-6">
                         <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-brand-700"><x-icon name="play" class="h-4 w-4" />{{ $course->lessons_count }} lekcija</div>
                         <h2 class="mt-2 text-xl font-bold text-slate-950">{{ $course->title }}</h2>
-                        <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-500">{{ $course->description }}</p>
+                        @if($course->description)<p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-500">{{ $course->description }}</p>@endif
                         <a class="btn-primary mt-6 w-full" href="{{ route('courses.show', $course) }}">Otvori kurs<x-icon name="arrow-right" class="h-4 w-4" /></a>
                     </div>
                 </article>

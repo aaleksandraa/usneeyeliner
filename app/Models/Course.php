@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\VimeoUrlParser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,17 +12,7 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'slug', 'description', 'image', 'vimeo_url', 'vimeo_thumbnail_url', 'status'];
-
-    public function getVimeoIdAttribute(): ?string
-    {
-        return app(VimeoUrlParser::class)->extractId($this->vimeo_url);
-    }
-
-    public function getVimeoEmbedUrlAttribute(): ?string
-    {
-        return app(VimeoUrlParser::class)->embedUrl($this->vimeo_url);
-    }
+    protected $fillable = ['title', 'slug', 'description', 'status'];
 
     public function getThumbnailUrlAttribute(): ?string
     {
@@ -31,7 +20,12 @@ class Course extends Model
             return Storage::disk('public')->url($this->image);
         }
 
-        return $this->vimeo_thumbnail_url;
+        if ($this->relationLoaded('lessons')) {
+            return $this->lessons->first(fn (CourseLesson $lesson) => filled($lesson->vimeo_thumbnail_url))?->vimeo_thumbnail_url
+                ?? $this->vimeo_thumbnail_url;
+        }
+
+        return $this->lessons()->whereNotNull('vimeo_thumbnail_url')->value('vimeo_thumbnail_url') ?? $this->vimeo_thumbnail_url;
     }
 
     public function getRouteKeyName(): string
