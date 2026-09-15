@@ -118,6 +118,9 @@ class LessonVimeoEmbedTest extends TestCase
 
         $this->actingAs($student)->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('https://i.vimeocdn.com/video/course-card.jpg', false);
+            ->assertSee('https://i.vimeocdn.com/video/course-card.jpg', false)
+            ->assertSee('data-course-card', false)
+            ->assertSee('aria-label="Otvori kurs '.$course->title.'"', false)
+            ->assertSee(route('courses.show', $course), false);
     }
 }
